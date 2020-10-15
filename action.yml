@@ -1,0 +1,10 @@
+# action.yml
+name: 'Build, test and update bindings'
+description: 'Builds a project and then optionally updates bindings in another repository'
+inputs:
+  commands:
+    description: 'Commands to run'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

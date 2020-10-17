@@ -1,0 +1,30 @@
+name: Build and push container
+
+on: [ push ]
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    name: Build and push
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Figure out tags
+        id: tag
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* || $GITHUB_REF == refs/heads/* ]]
+          then
+            echo "::set-output name=tag::${GITHUB_REF##*/}"
+          else
+            echo "Unknown commit trigger" 1>&2
+            exit 1
+          fi
+
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v2
+        with:
+          file: ./Containerfile
+          tags: guestfs-ci:latest, guestfs-ci:${{ steps.tag.outputs.tag }}
+          push: true
